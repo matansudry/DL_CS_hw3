@@ -23,7 +23,10 @@ def char_maps(text: str):
     #  It's best if you also sort the chars before assigning indices, so that
     #  they're in lexical order.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+
+    char_to_idx = {c: i for i, c in enumerate(sorted(list(set(text))))}
+    idx_to_char = {i: c for c, i in char_to_idx.items()}
+
     # ========================
     return char_to_idx, idx_to_char
 
@@ -39,7 +42,10 @@ def remove_chars(text: str, chars_to_remove):
     """
     # TODO: Implement according to the docstring.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+
+    text_clean = re.sub('|'.join(chars_to_remove), '', text)
+    n_removed = len(text) - len(text_clean)
+
     # ========================
     return text_clean, n_removed
 
@@ -59,7 +65,10 @@ def chars_to_onehot(text: str, char_to_idx: dict) -> Tensor:
     """
     # TODO: Implement the embedding.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+
+    eye = torch.eye(len(char_to_idx))
+    result = torch.cat(list(map(lambda c: eye[char_to_idx[c]].unsqueeze(dim=1), text)), dim=1).T.to(torch.int8)
+
     # ========================
     return result
 
@@ -76,7 +85,10 @@ def onehot_to_chars(embedded_text: Tensor, idx_to_char: dict) -> str:
     """
     # TODO: Implement the reverse-embedding.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+
+    ixes = torch.argmax(embedded_text, dim=1)
+    result = ''.join(list(map(lambda i: idx_to_char[int(i)], list(ixes))))
+
     # ========================
     return result
 
@@ -105,7 +117,13 @@ def chars_to_labelled_samples(text: str, char_to_idx: dict, seq_len: int, device
     #  3. Create the labels tensor in a similar way and convert to indices.
     #  Note that no explicit loops are required to implement this function.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+
+    embeds = chars_to_onehot(text, char_to_idx)
+    indecies = torch.tensor(list(map(lambda c: char_to_idx[c], text))[1:], device=device)
+    
+    samples = torch.stack(torch.split(embeds, seq_len)[:-1])
+    labels = torch.stack(torch.split(indecies, seq_len)[:-1])
+
     # ========================
     return samples, labels
 
