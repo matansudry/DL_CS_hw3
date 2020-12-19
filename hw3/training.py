@@ -93,7 +93,54 @@ class Trainer(abc.ABC):
             #  - Implement early stopping. This is a very useful and
             #    simple regularization technique that is highly recommended.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            save_checkpoint = True
+            actual_num_epochs += 1
+
+            # load stats from best_acc
+            if best_acc is not None and len(test_acc) == 0:
+                train_loss=best_acc['train_loss']
+                train_acc=best_acc['train_acc']
+                test_loss=best_acc['test_loss']
+                test_acc=best_acc['test_acc']
+
+            # train
+            train_result = self.train_epoch(dl_train, verbose=verbose, **kw)
+            train_loss.append(sum(train_result.losses)/len(train_result.losses))
+            train_acc.append(train_result.accuracy)
+
+            # test
+            test_result = self.test_epoch(dl_test, verbose=verbose, **kw)
+            test_epoch_loss = sum(test_result.losses)/len(test_result.losses)
+
+            # early_stopping
+            if early_stopping is not None and len(test_loss) > 0 and test_epoch_loss >= min(test_loss):
+                epochs_without_improvement += 1
+                if epochs_without_improvement >= early_stopping:
+                    break
+            else:
+                epochs_without_improvement = 0
+
+            test_loss.append(test_epoch_loss)
+
+            save = True if (len(test_acc) > 0 and test_result.accuracy >= max(test_acc)) else False
+            test_acc.append(test_result.accuracy)
+
+            # save stats to best_acc
+            best_acc = dict(
+                train_loss=train_loss,
+                train_acc=train_acc,
+                test_loss=test_loss,
+                test_acc=test_acc,
+            )
+
+            # save best checkpoint
+            if save:
+                saved_state = dict(
+                    best_acc=best_acc,
+                    ewi=epochs_without_improvement,
+                    model_state=self.model.state_dict(),
+                )
+                torch.save(saved_state, f"{checkpoints}_best.pt")
             # ========================
 
             # Save model checkpoint if requested
@@ -221,14 +268,14 @@ class RNNTrainer(Trainer):
     def train_epoch(self, dl_train: DataLoader, **kw):
         # TODO: Implement modifications to the base method, if needed.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.hidden_state = None
         # ========================
         return super().train_epoch(dl_train, **kw)
 
     def test_epoch(self, dl_test: DataLoader, **kw):
         # TODO: Implement modifications to the base method, if needed.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.hidden_state = None
         # ========================
         return super().test_epoch(dl_test, **kw)
 
@@ -246,7 +293,14 @@ class RNNTrainer(Trainer):
         #  - Update params
         #  - Calculate number of correct char predictions
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.model.train(True)
+        self.optimizer.zero_grad()
+        out, h = self.model(x, hidden_state=self.hidden_state)
+        self.hidden_state = h.detach()
+        loss = self.loss_fn(torch.transpose(out, 1, 2), y)
+        loss.backward()
+        self.optimizer.step()
+        num_correct = (torch.argmax(out, dim=2) == y).sum()
         # ========================
 
         # Note: scaling num_correct by seq_len because each sample has seq_len
@@ -266,7 +320,11 @@ class RNNTrainer(Trainer):
             #  - Loss calculation
             #  - Calculate number of correct predictions
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            self.model.train(False)
+            out, h = self.model(x, hidden_state=self.hidden_state)
+            self.hidden_state = h.detach()
+            loss = self.loss_fn(torch.transpose(out, 1, 2), y)
+            num_correct = (torch.argmax(out, dim=2) == y).sum()
             # ========================
 
         return BatchResult(loss.item(), num_correct.item() / seq_len)
@@ -294,3 +352,4 @@ class VAETrainer(Trainer):
             # ========================
 
         return BatchResult(loss.item(), 1 / data_loss.item())
+
