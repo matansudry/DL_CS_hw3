@@ -48,55 +48,23 @@ def part1_generation_params():
 
 
 part1_q1 = r"""
-**Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+we split the corpus into sequences, in order to be able to iterate over the dataset and divide it into batches. 
 """
 
 part1_q2 = r"""
-**Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+the sequence length is only a technical separation, the actual "memory" of the model is the hidden state. 
+since we only reset it at the end of the entire epoch, we can learn long sequences.
 """
 
 part1_q3 = r"""
-**Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+the model learns by predicting the next char in an auto-regressive way, so if we were to shuffle the data, the model would not learn to generate the continious text but would learn to generate noisy text that would make little sence.
+we would shuffle the data if we would like to learn shortt sequences under the assumption that the sequences are independent, but then we would reset the hidden state at the end of each batch and not only at the end of the epoch.
 """
 
 part1_q4 = r"""
-**Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+1. we lower the temperature in order to reduce stochasticity and make the sampling more deterministic.
+2. high temperature reduces the impact of the base distribution and pushes the distribution towards a uniform distribution.
+3. low temperature increases the impact of the base distribution and pushes the distribution towards an argmax on the base distribution.
 """
 # ==============
 
@@ -113,22 +81,22 @@ def part2_vae_hyperparams():
     )
     # TODO: Tweak the hyperparameters to generate a former president.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    hypers = dict(
+        batch_size=16,
+        h_dim=256,
+        z_dim=4,
+        x_sigma2=9e-3,
+        learn_rate=2e-4,
+        betas=(0.5, 0.99),
+    )
     # ========================
     return hypers
 
 
 part2_q1 = r"""
-**Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
-
+Sigma governs the relative strength of data-loss term with respect to KLD loss term. The larger the simga, the smaller the strengh of regression term, the larger the strength of KLD term and the level of variablity in generated images increases. This was evident in the following experiment in our model: Sigma^2 = 0.9: images shown little variace and tended towards an "average" image, all facing forward Sigma^2 = 0.0009 more weight to the data loss term: various faciel expressions, angles, face width
 """
 
 part2_q2 = r"""
