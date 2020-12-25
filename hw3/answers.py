@@ -94,47 +94,23 @@ def part2_vae_hyperparams():
 
 
 part2_q1 = r"""
+Sigma governs the relative strength of data-loss term with respect to KLD loss term.
+The larger the simga, the smaller the strengh of regression term, the larger the strength of KLD term and the level of variablity in generated images increases.
+This was evident in the following experiment in our model: Sigma^2 = 0.9: images shown little variace and tended towards an "average" image,
+all facing forward Sigma^2 = 0.0009 more weight to the data loss term: various faciel expressions, angles, face width
 
 
-Sigma governs the relative strength of data-loss term with respect to KLD loss term. The larger the simga, the smaller the strengh of regression term, the larger the strength of KLD term and the level of variablity in generated images increases. This was evident in the following experiment in our model: Sigma^2 = 0.9: images shown little variace and tended towards an "average" image, all facing forward Sigma^2 = 0.0009 more weight to the data loss term: various faciel expressions, angles, face width
 """
 
 part2_q2 = r"""
-**Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
 
 """
 
 part2_q3 = r"""
-**Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
 
 """
 
 part2_q4 = r"""
-**Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
 
 """
 
