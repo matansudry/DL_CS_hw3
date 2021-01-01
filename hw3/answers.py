@@ -139,14 +139,14 @@ def part3_gan_hyperparams():
     )
     # TODO: Tweak the hyperparameters to train your GAN.
     # ====== YOUR CODE: ======
-    hypers['batch_size'] = 4
+    hypers['batch_size'] = 2
     hypers['z_dim'] = 128
     hypers['data_label'] = 1
-    hypers['label_noise'] = 0.2
+    hypers['label_noise'] = 0.3
     hypers['discriminator_optimizer']['type'] = 'Adam'
-    hypers['discriminator_optimizer']['lr'] = 0.0005
+    hypers['discriminator_optimizer']['lr'] = 0.000008
     hypers['generator_optimizer']['type'] = 'Adam'
-    hypers['generator_optimizer']['lr'] = 0.0005
+    hypers['generator_optimizer']['lr'] = 0.001
     # ========================
     return hypers
 
@@ -165,8 +165,8 @@ When we are imporving the classification stage we want to keep the grad and only
 part3_q2 = r"""
 **Your answer:**
 1.  The target of the network is to generate new image that will be close the real images so the discriminator will know which are the real and which are the fake.
-    in case the discriminator will think all the picture are real the loss of the generator will be 0 but we dont know if we are doing good job are just the discriminator doing bad job.
-    we think that generator only will not produce good images and most consider the discriminator loss.
+in case the discriminator will think all the picture are real the loss of the generator will be 0 but we dont know if we are doing good job or just the discriminator doing bad job.
+we think that generator only will not produce good images and most consider the discriminator loss.
 2. if the generator loss decreases and the discriminator loss stay the same it means the discriminator have classified more real images as fake and more fake as real, by that the loss keep the same for the discriminator and decrease for the generator.
 
 """
@@ -174,13 +174,8 @@ part3_q2 = r"""
 part3_q3 = r"""
 **Your answer:**
 
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+VAE as praducing the picture more passport like with smooth background and we think the main reason for that is the algorithem is more "mean" focus using L2 norm
+GAN has different kinds of background and the faces are not good like the VAE because we think GAN are not focusing on the "mean" as the VAE.
 
 """
 

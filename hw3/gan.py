@@ -314,11 +314,15 @@ def save_checkpoint(gen_model, dsc_losses, gen_losses, checkpoint_file):
     #  You should decide what logic to use for deciding when to save.
     #  If you save, set saved to True.
     # ====== YOUR CODE: ======
-    tmp = min(gen_losses)
-    predicted_index = gen_losses.index(tmp)
-    if dsc_losses[-1] < 0.55 and dsc_losses[-1] > 0.45 and predicted_index == len(gen_losses)-1:
+    if len(gen_losses) < 11:
+        return saved
+    new_arr = []
+    for i in range(len(gen_losses) - 10):
+        new_arr.append(1/(abs(dsc_losses[i+10] - gen_losses[i+10])*(dsc_losses[i+10] + gen_losses[i+10])))
+    tmp = max(new_arr)
+    predicted_index = new_arr.index(tmp)
+    if (predicted_index == len(gen_losses)-11):
         torch.save(gen_model, checkpoint_file)
         saved = True
     # ========================
-
     return saved
