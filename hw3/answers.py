@@ -129,19 +129,24 @@ def part3_gan_hyperparams():
         data_label=0,
         label_noise=0.0,
         discriminator_optimizer=dict(
-            type="",  # Any name in nn.optim like SGD, Adam
+            type='',  # Any name in nn.optim like SGD, Adam
             lr=0.0,
-            # You an add extra args for the optimizer here
         ),
         generator_optimizer=dict(
-            type="",  # Any name in nn.optim like SGD, Adam
+            type='',  # Any name in nn.optim like SGD, Adam
             lr=0.0,
-            # You an add extra args for the optimizer here
         ),
     )
     # TODO: Tweak the hyperparameters to train your GAN.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    hypers['batch_size'] = 4
+    hypers['z_dim'] = 128
+    hypers['data_label'] = 1
+    hypers['label_noise'] = 0.2
+    hypers['discriminator_optimizer']['type'] = 'Adam'
+    hypers['discriminator_optimizer']['lr'] = 0.0005
+    hypers['generator_optimizer']['type'] = 'Adam'
+    hypers['generator_optimizer']['lr'] = 0.0005
     # ========================
     return hypers
 
@@ -150,25 +155,19 @@ part3_q1 = r"""
 **Your answer:**
 
 
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+The loss in GAN are splitted to 2, discriminator loss and generator loss.
+The training process has 2 stages, imporving generated images and imporving discriminator to classify between real and fake images.
+When we are imporving the generated stage we want to tune to CNN parameters so the grad should be part of it.
+When we are imporving the classification stage we want to keep the grad and only imporving the discriminator so we are turning the grad. 
 
 """
 
 part3_q2 = r"""
 **Your answer:**
-
-
-Write your answer using **markdown** and $\LaTeX$:
-```python
-# A code block
-a = 2
-```
-An equation: $e^{i\pi} -1 = 0$
+1.  The target of the network is to generate new image that will be close the real images so the discriminator will know which are the real and which are the fake.
+    in case the discriminator will think all the picture are real the loss of the generator will be 0 but we dont know if we are doing good job are just the discriminator doing bad job.
+    we think that generator only will not produce good images and most consider the discriminator loss.
+2. if the generator loss decreases and the discriminator loss stay the same it means the discriminator have classified more real images as fake and more fake as real, by that the loss keep the same for the discriminator and decrease for the generator.
 
 """
 
