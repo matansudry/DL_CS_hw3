@@ -94,24 +94,31 @@ def part2_vae_hyperparams():
 
 
 part2_q1 = r"""
-Sigma governs the relative strength of data-loss term with respect to KLD loss term.
-The larger the simga, the smaller the strengh of regression term, the larger the strength of KLD term and the level of variablity in generated images increases.
-This was evident in the following experiment in our model: Sigma^2 = 0.9: images shown little variace and tended towards an "average" image,
-all facing forward Sigma^2 = 0.0009 more weight to the data loss term: various faciel expressions, angles, face width
-
-
+in the vae_loss function:
+$$
+\ell(\vec{\alpha},\vec{\beta};\bb{x}) =
+\frac{1}{\sigma^2 d_x} \left\| \bb{x}- \Psi _{\bb{\beta}}\left(  \bb{\mu} _{\bb{\alpha}}(\bb{x})  +
+\bb{\Sigma}^{\frac{1}{2}} _{\bb{\alpha}}(\bb{x}) \bb{u}   \right) \right\| _2^2 +
+\mathrm{tr}\,\bb{\Sigma} _{\bb{\alpha}}(\bb{x}) +  \|\bb{\mu} _{\bb{\alpha}}(\bb{x})\|^2 _2 - d_z - \log\det \bb{\Sigma} _{\bb{\alpha}}(\bb{x})
+$$
+the $\sigma^2$ hyperparameter governs the impact of the $\left\| \bb{x}- \Psi _{\bb{\beta}}\left(  \bb{\mu} _{\bb{\alpha}}(\bb{x}) + \bb{\Sigma}^{\frac{1}{2}} _{\bb{\alpha}}(\bb{x}) \bb{u}   \right) \right\| _2^2$ term.
+higher $\sigma^2$ means less weight to data-loss, and higher KL-Divergence weight which results in more similar images  
+lower $\sigma^2$ means more weight to data-loss, and lower KL-Divergence weight which results in more diverse images
 """
 
 part2_q2 = r"""
-
+1. the reconstruction loss term acts as data regression term, which makes the model learn the identity function.
+   the KL-Divergence loss term manages the amount of noise, and acts as regularization on the encoded (latent representation of) images and manages.
+2. the KL-Divergence loss term encourages the approximate posterior to be close to the prior.
+3. it alows us to get clearer images that look less like noise.
 """
 
 part2_q3 = r"""
-
+This allows us to maximize the likelihood of generated instances from the entire latent space
 """
 
 part2_q4 = r"""
-
+using the log transformation is a common practice, since it is easier to optimize the log of the latent-space variance instead of the latent-space variance itself.
 """
 
 # ==============
@@ -152,31 +159,22 @@ def part3_gan_hyperparams():
 
 
 part3_q1 = r"""
-**Your answer:**
-
-
 The loss in GAN are splitted to 2, discriminator loss and generator loss.
 The training process has 2 stages, imporving generated images and imporving discriminator to classify between real and fake images.
 When we are imporving the generated stage we want to tune to CNN parameters so the grad should be part of it.
 When we are imporving the classification stage we want to keep the grad and only imporving the discriminator so we are turning the grad. 
-
 """
 
 part3_q2 = r"""
-**Your answer:**
 1.  The target of the network is to generate new image that will be close the real images so the discriminator will know which are the real and which are the fake.
 in case the discriminator will think all the picture are real the loss of the generator will be 0 but we dont know if we are doing good job or just the discriminator doing bad job.
 we think that generator only will not produce good images and most consider the discriminator loss.
 2. if the generator loss decreases and the discriminator loss stay the same it means the discriminator have classified more real images as fake and more fake as real, by that the loss keep the same for the discriminator and decrease for the generator.
-
 """
 
 part3_q3 = r"""
-**Your answer:**
-
 VAE as praducing the picture more passport like with smooth background and we think the main reason for that is the algorithem is more "mean" focus using L2 norm
 GAN has different kinds of background and the faces are not good like the VAE because we think GAN are not focusing on the "mean" as the VAE.
-
 """
 
 # ==============
